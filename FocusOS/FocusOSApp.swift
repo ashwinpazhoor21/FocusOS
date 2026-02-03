@@ -1,17 +1,23 @@
-//
-//  FocusOSApp.swift
-//  FocusOS
-//
-//  Created by Ashwin Pazhoor on 2/2/26.
-//
-
 import SwiftUI
 
 @main
 struct FocusOSApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        Settings {
+            EmptyView()
         }
+    }
+}
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var statusBarController: StatusBarController?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.setActivationPolicy(.accessory)
+
+        let contentView = ContentView()
+        statusBarController = StatusBarController(rootView: contentView)
     }
 }
