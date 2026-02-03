@@ -3,6 +3,9 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var tracker = TrackingManager()
 
+    // ✅ Holds the summary text shown inside the app
+    @State private var dailySummaryText: String = ""
+
     var body: some View {
         VStack(spacing: 14) {
             Text("FocusOS")
@@ -26,30 +29,31 @@ struct ContentView: View {
 
             Divider().padding(.vertical, 6)
 
-            Button("Log Once (Debug)") {
-                tracker.startTracking(interval: 999999)
-                tracker.stopTracking()
-            }
-            .font(.callout)
-            .foregroundStyle(.secondary)
-
-            
-            Button("Build Sessions + Print Metrics") {
+            // ✅ Generates sessions + metrics + summary and shows it in the popover
+            Button("Generate Daily Summary") {
                 Sessionizer.rebuildSessions(forDay: Date())
                 let m = MetricsEngine.metrics(forDay: Date())
-
-                print("📊 Daily Metrics")
-                print("Total active min:", m.totalActiveMinutes)
-                print("Context switches:", m.contextSwitches)
-                print("Longest focus min:", m.longestFocusMinutes)
-                print("Top apps:", m.topApps)
+                dailySummaryText = DailySummaryGenerator.makeSummary(for: Date(), metrics: m)
             }
-            .font(.callout)
-            .padding(.top, 6)
 
+            // ✅ Summary shown inside the menu bar popover (not Xcode console)
+            if !dailySummaryText.isEmpty {
+                ScrollView {
+                    Text(dailySummaryText)
+                        .font(.system(.body, design: .monospaced))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 4)
+                }
+                .frame(height: 200)
+                .padding(.top, 4)
+            } else {
+                Text("No summary yet. Click “Generate Daily Summary”.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(18)
-        .frame(width: 280)
+        .frame(width: 320) // slightly wider so summary looks good
     }
 }
 
