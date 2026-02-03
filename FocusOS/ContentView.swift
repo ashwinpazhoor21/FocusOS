@@ -27,18 +27,32 @@ struct ContentView: View {
             Divider().padding(.vertical, 6)
 
             Button("Log Once (Debug)") {
-                // quick way to verify it works without timer
-                tracker.startTracking(interval: 999999) // hacky: starts then logs once
+                tracker.startTracking(interval: 999999)
                 tracker.stopTracking()
             }
             .font(.callout)
             .foregroundStyle(.secondary)
+
+            
+            Button("Build Sessions + Print Metrics") {
+                Sessionizer.rebuildSessions(forDay: Date())
+                let m = MetricsEngine.metrics(forDay: Date())
+
+                print("📊 Daily Metrics")
+                print("Total active min:", m.totalActiveMinutes)
+                print("Context switches:", m.contextSwitches)
+                print("Longest focus min:", m.longestFocusMinutes)
+                print("Top apps:", m.topApps)
+            }
+            .font(.callout)
+            .padding(.top, 6)
 
         }
         .padding(18)
         .frame(width: 280)
     }
 }
+
 #Preview {
     ContentView()
 }

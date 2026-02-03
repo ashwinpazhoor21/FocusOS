@@ -7,6 +7,8 @@
 
 import Foundation
 import AppKit
+import CoreGraphics
+
 
 final class TrackingManager: ObservableObject {
     @Published var isTracking: Bool = false
@@ -32,16 +34,29 @@ final class TrackingManager: ObservableObject {
         timer = nil
         isTracking = false
     }
+    private func isIdle(thresholdSec: Double = 60) -> Bool {
+        let mouseIdle = CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: .mouseMoved)
+        let keyIdle = CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: .keyDown)
+        let idleTime = min(mouseIdle, keyIdle)
+        return idleTime >= thresholdSec
+    }
 
     private func logFrontmostApp() {
-        let now = ISO8601DateFormatter().string(from: Date())
+        let now = Date()
+        let idle = isIdle(thresholdSec: 60)
 
         if let app = NSWorkspace.shared.frontmostApplication {
             let name = app.localizedName ?? "Unknown"
             let bundleID = app.bundleIdentifier ?? "NoBundleID"
-            print("\(now) | \(bundleID) | \(name)")
-        } else {
-            print("\(now) | No frontmost application")
+
+            SQLiteManager.shared.insertAppEvent(
+                timestamp: now,
+                bundleId: bundleID,
+                appName: name,
+                isIdle: idle
+            )
+
+            print("Saved event: \(bundleID) | \(name) | idle=\(idle)")
         }
     }
 }
