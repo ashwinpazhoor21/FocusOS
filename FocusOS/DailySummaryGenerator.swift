@@ -23,7 +23,7 @@ final class DailySummaryGenerator {
                 .joined(separator: ", ")
         }()
 
-        // Context switch rate per hour
+
         let switchRate: String = {
             guard m.totalActiveMinutes > 0 else { return "0/hr" }
             let hours = Double(m.totalActiveMinutes) / 60.0
@@ -31,7 +31,7 @@ final class DailySummaryGenerator {
             return String(format: "%.1f/hr", rate)
         }()
 
-        // Focus quality heuristic
+
         let focusQuality: String = {
             if m.longestFocusMinutes >= 40 {
                 return "strong"
@@ -42,7 +42,7 @@ final class DailySummaryGenerator {
             }
         }()
 
-        // Recommendations
+
         var recs: [String] = []
 
         if m.contextSwitches >= 60 {
@@ -65,7 +65,7 @@ final class DailySummaryGenerator {
             recs.append("You had low active time today. Try scheduling one dedicated study block tomorrow.")
         }
 
-        // Build final summary text
+
         var lines: [String] = []
         lines.append("Daily Summary (\(dateString))")
         lines.append("")

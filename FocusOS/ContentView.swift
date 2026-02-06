@@ -27,7 +27,6 @@ struct ContentView: View {
 
             Divider().padding(.vertical, 6)
 
-
             VStack(spacing: 8) {
                 Button(tracker.isFocusModeEnabled ? "Disable Focus Mode" : "Enable Focus Mode") {
                     tracker.toggleFocusMode()
@@ -49,6 +48,23 @@ struct ContentView: View {
                         .foregroundStyle(.red)
                         .multilineTextAlignment(.center)
                 }
+            }
+
+            Divider().padding(.vertical, 6)
+
+
+            VStack(spacing: 8) {
+                Button("Schedule Daily Summary (8 PM)") {
+                    NotificationManager.shared.requestAuthorization()
+                    DailySummaryScheduler.scheduleDailyAt8PM()
+                }
+
+                Button("Test Summary Notification (10s)") {
+                    NotificationManager.shared.requestAuthorization()
+                    DailySummaryScheduler.scheduleTestIn10Seconds()
+                }
+                .font(.callout)
+                .foregroundStyle(.secondary)
             }
 
             Divider().padding(.vertical, 6)

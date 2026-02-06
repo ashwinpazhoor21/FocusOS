@@ -22,19 +22,20 @@ final class MetricsEngine {
     static func metrics(forDay day: Date) -> DailyMetrics {
         let sessions = SQLiteManager.shared.fetchSessions(forDay: day)
 
-        // Totals
+      
         let totalMin = sessions.reduce(0) { $0 + ($1.durationSec / 60) }
         let longestMin = sessions.map { $0.durationSec / 60 }.max() ?? 0
 
-        // Context switches (bundle changes between consecutive sessions)
+    
         var switches = 0
-        for i in 1..<sessions.count {
-            if sessions[i].bundleId != sessions[i - 1].bundleId {
-                switches += 1
+        if sessions.count >= 2 {
+            for i in 1..<sessions.count {
+                if sessions[i].bundleId != sessions[i - 1].bundleId {
+                    switches += 1
+                }
             }
         }
 
-        // Top apps + category minutes
         var byApp: [String: Int] = [:]
         var deep = 0
         var shallow = 0

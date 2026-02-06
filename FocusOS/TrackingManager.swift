@@ -12,20 +12,19 @@ import CoreGraphics
 final class TrackingManager: ObservableObject {
     @Published var isTracking: Bool = false
 
-    // Focus Mode state + last violation for UI
+
     @Published var isFocusModeEnabled: Bool = false
     @Published var lastViolationText: String = ""
 
     private var timer: Timer?
 
-    // Cooldown to prevent notification spam
+
     private var lastNotifyAtByBundle: [String: Date] = [:]
     private let notifyCooldownSec: TimeInterval = 25
 
     func startTracking(interval: TimeInterval = 2.0) {
         guard !isTracking else { return }
 
-        // ✅ Ask for notification permission once user opts into tracking
         NotificationManager.shared.requestAuthorization()
 
         isTracking = true

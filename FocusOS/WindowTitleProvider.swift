@@ -11,8 +11,7 @@ import ApplicationServices
 
 final class WindowTitleProvider {
 
-    /// Call this to trigger the system prompt (best effort) the first time user starts tracking.
-    /// Returns whether the process is trusted *at the time of calling*.
+ 
     static func requestAccessibilityPermission() -> Bool {
         let options: CFDictionary = [
             kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true
